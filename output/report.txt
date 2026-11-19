@@ -1,0 +1,40 @@
+Forward F = 102.0201
+SVI params: {'a': 0.0181, 'b': 0.0729, 'rho': -0.7, 'm': 0.106, 'sigma': 0.2}
+Butterfly check on k in [-10,10]: min g(k) = 0.2586, min w = 0.0285, wing slope b(1+|rho|) = 0.1239 (<= 4) -> arbitrage-free: True
+ATM vol (k=0) 20.00%, 10d put vol 27.01%, 10d call vol 17.00%
+10 quotes -> 9 distinct strikes (forward 50d put and 50d call coincide at the DNS strike F*exp(w/2)).
+
+Benchmark convergence (half-width in log-moneyness -> fair variance):
+  |ln K/F| <=    1.0: 0.0507302216  (22.523370 vol pts)
+  |ln K/F| <=    2.0: 0.0513262649  (22.655301 vol pts)
+  |ln K/F| <=    4.0: 0.0513399952  (22.658331 vol pts)
+  |ln K/F| <=    8.0: 0.0513400037  (22.658333 vol pts)
+Benchmark fair variance  = 0.0513400037  -> 22.6583 vol pts
+Delta-space cross-check  = 0.0513400037  (diff 4.25e-15)
+Variance below 10d put  (K<74.85):   94.729 var pts = 18.45% of total
+Variance above 10d call (K>128.70):   7.856 var pts = 1.53% of total
+Strip without both tails would price 20.269 vol pts
+K_cut (1d put) = 47.298;  K_cut (2.5x vol cap) = 57.900
+
+ATM note: the 50d put sits above F, so it is held with one long forward per put (put + forward = call); its weight is the share of the ATM bucket below F.
+
+SUMMARY
+                         method  fair_strike_vol  benchmark_vol  error_vol_pts  low_edge_w/trunc  high_edge_w/trunc
+                1 Riemann (VIX)          21.0483        22.6583        -1.6101            0.9946             0.9988
+           2a Bucket, truncated          21.1197        22.6583        -1.5386            1.0000             1.0000
+  2b Bucket, extended to 1d put          27.5433        22.6583         4.8849            4.4174            15.2091
+2b Bucket, extended to 2.5x cap          25.3976        22.6583         2.7393            2.4506            15.2091
+       2c Bucket, price-matched          22.8145        22.6583         0.1562            2.2020             1.6213
+                 3 Chord (DDKZ)          20.2944        22.6583        -2.3639            0.4535             0.5233
+         4 Least squares (NNLS)          22.5452        22.6583        -0.1131            4.2859             2.9401
+
+SCENARIOS: net P&L of short variance swap (struck at benchmark) + long strip,
+per 1 unit of variance notional (variance points, present value).
+Assumption: instantaneous spot move at inception; realised variance over the life = ln(1+move)^2/T + initial fair variance (full T remaining). Options are revalued with the smile sticky to moneyness (SVI in ln(K/F_new)), so fair variance is unchanged after the move.
+ spot_move   spot  realised_vol  short_varswap_pnl  continuous strip  1 Riemann (VIX)  2a Bucket, truncated  2b Bucket, extended to 1d put  2b Bucket, extended to 2.5x cap  2c Bucket, price-matched  3 Chord (DDKZ)  4 Least squares (NNLS)
+     -0.50  50.00         72.92           -4709.39           -922.94         -2235.64              -2204.63                         639.06                         -1062.50                  -1169.64        -2662.34                 -536.38
+     -0.30  70.00         42.26           -1246.98           -135.93          -392.95               -380.75                         294.11                          -159.10                   -108.69         -498.25                  -98.11
+     -0.15  85.00         27.88            -258.89            -13.47           -87.14                -83.46                          16.25                          -100.87                    -16.42         -111.14                  -21.78
+      0.00 100.00         22.66              -0.00              0.00             0.00                  0.00                           0.00                             0.00                      0.00            0.00                    0.00
+      0.15 115.00         26.62            -191.47              9.24            25.54                 23.38                         470.34                           520.17                     16.26           18.64                   13.62
+      0.30 130.00         34.67            -674.72             63.09             0.03                 -4.02                        1643.43                          1717.73                     28.25          -44.18                   48.85
