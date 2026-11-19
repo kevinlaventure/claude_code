@@ -1,8 +1,0 @@
-method,fair_strike_vol,benchmark_vol,error_vol_pts,low_edge_w/trunc,high_edge_w/trunc
-1 Riemann (VIX),21.048280,22.658333,-1.610053,0.994630,0.998845
-"2a Bucket, truncated",21.119716,22.658333,-1.538616,1.000000,1.000000
-"2b Bucket, extended to 1d put",27.543262,22.658333,4.884930,4.417371,15.209067
-"2b Bucket, extended to 2.5x cap",25.397639,22.658333,2.739306,2.450648,15.209067
-"2c Bucket, price-matched",22.814533,22.658333,0.156200,2.201992,1.621270
-3 Chord (DDKZ),20.294384,22.658333,-2.363948,0.453509,0.523279
-4 Least squares (NNLS),22.545205,22.658333,-0.113127,4.285902,2.940138
